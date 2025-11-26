@@ -1,4 +1,4 @@
-import MessageComposer from "./ui/message-composer";
+import MessageComposer from "../ui/message-composer";
 
 export default function ChatMessageComposer() {
   return (

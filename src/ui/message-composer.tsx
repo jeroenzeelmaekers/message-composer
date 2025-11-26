@@ -1,10 +1,12 @@
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import {
+  type InitialConfigType,
+  LexicalComposer,
+} from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { FORMAT_TEXT_COMMAND } from "lexical";
+import { FORMAT_TEXT_COMMAND, type EditorThemeClasses } from "lexical";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-
 import {
   BoldIcon,
   CodeSquareIcon,
@@ -23,6 +25,7 @@ import {
   createContext,
   useContext,
   useState,
+  type ReactNode,
   type ComponentProps,
   type Dispatch,
   type PropsWithChildren,
@@ -55,7 +58,7 @@ const THEME = {
       listitem: "ml-4 list-inside",
     },
   },
-};
+} satisfies EditorThemeClasses;
 
 type MessageComposerContext = {
   message?: string;
@@ -78,7 +81,7 @@ function useMessageComposerContext() {
   return context;
 }
 
-type ComposerProps = PropsWithChildren & MessageComposerContext;
+type ComposerProps = PropsWithChildren<MessageComposerContext>;
 
 function Provider({ children, ...props }: ComposerProps) {
   const [files, setFiles] = useState<File[]>([]);
@@ -90,7 +93,7 @@ function Provider({ children, ...props }: ComposerProps) {
     },
     theme: THEME,
     nodes: [ListNode, ListItemNode, LinkNode, AutoLinkNode],
-  };
+  } satisfies InitialConfigType;
 
   return (
     <MessageComposerContext.Provider value={{ ...props, files, setFiles }}>
@@ -129,53 +132,59 @@ function PresetHeader() {
   );
 }
 
-function Header({ children }: PropsWithChildren) {
+function Header({ children }: { children: ReactNode }) {
   return <div className="flex flex-row">{children}</div>;
 }
 
-function BoldButton() {
+function BoldButton({ type = "button", ...props }: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
 
+  function onClick() {
+    editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+  }
+
   return (
-    <Button
-      type="button"
-      onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
-    >
+    <Button type={type} onClick={onClick} {...props}>
       <BoldIcon size={ICON_SIZE} />
       <span className="sr-only">Bold</span>
     </Button>
   );
 }
 
-function ItalicButton() {
+function ItalicButton({ type = "button", ...props }: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
+
+  function onClick() {
+    editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+  }
+
   return (
-    <Button
-      type="button"
-      onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}
-    >
+    <Button type={type} onClick={onClick} {...props}>
       <ItalicIcon size={ICON_SIZE} />
       <span className="sr-only">Italic</span>
     </Button>
   );
 }
 
-function StrikeThroughButton() {
+function StrikeThroughButton({
+  type = "button",
+  ...props
+}: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
+
+  function onClick() {
+    editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+  }
+
   return (
-    <Button
-      type="button"
-      onClick={() =>
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")
-      }
-    >
+    <Button type={type} onClick={onClick} {...props}>
       <StrikethroughIcon size={ICON_SIZE} />
       <span className="sr-only">Strike through</span>
     </Button>
   );
 }
 
-function LinkButton() {
+function LinkButton({ type = "button", ...props }: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
 
   function onAddOrEditLink() {
@@ -187,62 +196,70 @@ function LinkButton() {
   }
 
   return (
-    <Button type="button" onClick={onAddOrEditLink}>
+    <Button type={type} onClick={onAddOrEditLink} {...props}>
       <LinkIcon size={ICON_SIZE} />
       <span className="sr-only">Link</span>
     </Button>
   );
 }
 
-function ListButton() {
+function ListButton({ type = "button", ...props }: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
+
+  function onClick() {
+    editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+  }
   return (
-    <Button
-      type="button"
-      onClick={() =>
-        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
-      }
-    >
+    <Button type={type} onClick={onClick} {...props}>
       <ListIcon size={ICON_SIZE} />
       <span className="sr-only">List</span>
     </Button>
   );
 }
 
-function OrderedListButton() {
+function OrderedListButton({
+  type = "button",
+  ...props
+}: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
+
+  function onClick() {
+    editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+  }
+
   return (
-    <Button
-      type="button"
-      onClick={() =>
-        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
-      }
-    >
+    <Button type={type} onClick={onClick} {...props}>
       <ListOrderedIcon size={ICON_SIZE} />
       <span className="sr-only">Ordered list</span>
     </Button>
   );
 }
 
-function IncrementIndentButton() {
+function IncrementIndentButton({
+  type = "button",
+  ...props
+}: ComponentProps<"button">) {
   return (
-    <Button type="button">
+    <Button type={type} {...props}>
       <ListIndentIncreaseIcon size={ICON_SIZE} />
       <span className="sr-only">Increase indent</span>
     </Button>
   );
 }
 
-function CodeBlockButton() {
+function CodeBlockButton({
+  type = "button",
+  ...props
+}: ComponentProps<"button">) {
   return (
-    <Button type="button">
+    <Button type={type} {...props}>
       <CodeSquareIcon size={ICON_SIZE} />
       <span className="sr-only">Code block</span>
     </Button>
   );
 }
 
-function SendButton() {
+function SendButton({ type = "button", ...props }: ComponentProps<"button">) {
   const [editor] = useLexicalComposerContext();
   const { files, onSend } = useMessageComposerContext();
 
@@ -257,16 +274,16 @@ function SendButton() {
   }
 
   return (
-    <Button type="button" onClick={onSendMessage}>
+    <Button type={type} onClick={onSendMessage} {...props}>
       <SendIcon size={ICON_SIZE} />
       <span className="sr-only">Send message</span>
     </Button>
   );
 }
 
-function FileButton() {
+function FileButton({ type = "button", ...props }: ComponentProps<"button">) {
   return (
-    <Button type="button">
+    <Button type={type} {...props}>
       <PaperclipIcon size={ICON_SIZE} />
       <span className="sr-only">Add file</span>
     </Button>
@@ -282,7 +299,7 @@ function Button(props: ComponentProps<"button">) {
   );
 }
 
-function ActionGroup({ children }: PropsWithChildren) {
+function ActionGroup({ children }: { children: ReactNode }) {
   return <div className="flex flex-row">{children}</div>;
 }
 
@@ -300,8 +317,8 @@ function Divider({
   );
 }
 
-function Footer(props: PropsWithChildren) {
-  return <div className="flex flex-row">{props.children}</div>;
+function Footer({ children }: { children: ReactNode }) {
+  return <div className="flex flex-row">{children}</div>;
 }
 
 function PresetFooter() {
@@ -317,18 +334,16 @@ function PresetFooter() {
 
 function Input() {
   return (
-    <>
-      <RichTextPlugin
-        contentEditable={
-          <ContentEditable className="min-h-20 mx-2 outline-none" />
-        }
-        ErrorBoundary={LexicalErrorBoundary}
-      />
-    </>
+    <RichTextPlugin
+      contentEditable={
+        <ContentEditable className="min-h-20 mx-2 outline-none" />
+      }
+      ErrorBoundary={LexicalErrorBoundary}
+    />
   );
 }
 
-function FileDrop({ children }: PropsWithChildren) {
+function FileDrop({ children }: { children: ReactNode }) {
   const { setFiles } = useMessageComposerContext();
   return (
     <Dropzone

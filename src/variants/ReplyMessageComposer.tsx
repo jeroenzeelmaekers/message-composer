@@ -1,4 +1,4 @@
-import MessageComposer from "./ui/message-composer";
+import MessageComposer from "../ui/message-composer";
 
 export default function ReplyMessageComposer() {
   return (
@@ -10,7 +10,9 @@ export default function ReplyMessageComposer() {
       <MessageComposer.PresetHeader />
       <MessageComposer.Input />
       <MessageComposer.Footer>
-        <MessageComposer.SendButton />
+        <div className="flex flex-row w-full justify-end">
+          <MessageComposer.SendButton />
+        </div>
       </MessageComposer.Footer>
     </MessageComposer.Provider>
   );
