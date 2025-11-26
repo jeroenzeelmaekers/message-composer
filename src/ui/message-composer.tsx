@@ -61,6 +61,7 @@ type MessageComposerContext = {
   message?: string;
   files?: File[];
   setFiles?: Dispatch<SetStateAction<File[]>>;
+  onSend?: () => void;
 };
 
 const MessageComposerContext = createContext<
@@ -243,9 +244,13 @@ function CodeBlockButton() {
 
 function SendButton() {
   const [editor] = useLexicalComposerContext();
-  const { files } = useMessageComposerContext();
+  const { files, onSend } = useMessageComposerContext();
 
   function onSendMessage() {
+    // Override send behavior.
+    if (onSend) onSend();
+
+    // Default behavior: log the message and files to the console.
     const message = editor.getEditorState().toJSON();
     console.log("Sending message:", message);
     console.log("With files:", files);
