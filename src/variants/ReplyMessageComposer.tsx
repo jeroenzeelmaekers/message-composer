@@ -2,15 +2,11 @@ import MessageComposer from "../ui/message-composer";
 
 export default function ReplyMessageComposer() {
   return (
-    <MessageComposer.Provider
-      onSend={() => {
-        /*override send logic*/
-      }}
-    >
+    <MessageComposer.Provider onSend={() => {}}>
       <MessageComposer.PresetHeader />
-      <MessageComposer.Input />
+      <MessageComposer.Input label="Reply message" />
       <MessageComposer.Footer>
-        <div className="flex flex-row w-full justify-end">
+        <div className="flex w-full justify-end">
           <MessageComposer.SendButton />
         </div>
       </MessageComposer.Footer>
