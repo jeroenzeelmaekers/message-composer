@@ -502,7 +502,12 @@ export function CodeBlockButton({ type = "button", onClick, ...props }: Componen
   }
 
   return (
-    <Button {...props} type={type} tooltip="Code block" onClick={withAction(insertCodeBlock, onClick)}>
+    <Button
+      {...props}
+      type={type}
+      tooltip="Code block"
+      onClick={withAction(insertCodeBlock, onClick)}
+    >
       <CodeSquareIcon size={ICON_SIZE} aria-hidden="true" />
       <span className="sr-only">Code block</span>
     </Button>
